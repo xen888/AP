@@ -11,7 +11,6 @@ from matplotlib import pyplot as plt
 import seaborn as sns
 sns.set()
 import pandas as pd
-from sklearn.neighbors import NearestNeighbors
 import statistics
 import math
 from sklearn.preprocessing import StandardScaler
