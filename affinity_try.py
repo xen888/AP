@@ -243,47 +243,4 @@ plt.show()
 # plt.scatter(X_lda[:,0], X_lda[:,1],c=ind, cmap='rainbow', alpha=0.7, edgecolors='b')
 # plt.title('PLS ab42_events.csv'+str(X_lda.shape))
 # r_value=scipy.stats.pearsonr(X,X_pca)
-#%% # r(i,k)=s(i,k)-max{a(i,k'+s(i,k'))} k'!=k
-#%%
-
-# def readS(dfn):
-#     #read data 
-#     file = dfn
-#     dataPoint=file.to_numpy().reshape(N,N2)
-#     size = N*(N-1)/2
-#     tmpS = []
-#     t=[];
-#     #compute similarity between data point i and j (i is not equal to j)
-#     i = 0
-#     for i in range(N-1):
-#         j = i+1
-#         t=0
-#         k=0
-#         # for j in range(N):
-#         #     t= t-((dataPoint[i,j]-dataPoint[j,i])*(dataPoint[i,i]-dataPoint[j,i])) # only for 2D data and no sqrt # high distance less similarity so negative sign used
-#         #     print(i,j,t)
-#         for k in range(N):
-#             t=t+((dataPoint[i,k]-dataPoint[j,k])*(dataPoint[i,k]-dataPoint[j,k]))
-#         # j=0
-#         # for j in range(N)
-#         S[i,j]=t;
-#         # S[j][i] = S[i][j];
-#     #     tmpS.append(t)
-#     #     sum_all=sum(tmpS)
-#     # # compute preferences for all data points: median 
-#     # tmpS.sort()
-#     dia = S.min()
-
-#     # if math.fmod(size, 2)==0:
-#     #     median = (tmpS[math.trunc(size / float(2))]+tmpS[math.trunc(size / float(2))-1])/2
-#     # else:
-#     #     median = tmpS[math.trunc(size / float(2))]
-#     i = 0
-#     while i<N:
-#         S[i][i] = dia # median later
-#         i += 1
-#     return S
-
-# arr = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
-
-# newarr = arr.reshape(2, 3, 2)                    
+#%% # r(i,k)=s(i,k)-max{a(i,k'+s(i,k'))} k'!=k         
