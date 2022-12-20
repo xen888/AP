@@ -143,19 +143,6 @@ def get_cluster_rank(X,crit,t): # X=whole N spectra, ind=label from clustering f
     plt.savefig('Results/All_rank.pdf')
     plt.show()
     plt.tight_layout()
-    # fig= plt.figure()
-    # fig.set_figwidth(20)
-    # fig.set_figheight(10)
-    # plt.rcParams.update({'font.size': 12})
-    # ax3 = fig.add_subplot(111)
-    # avg_X = np.mean(X, axis=0)
-    # norm_X = event.normalize(avg_X)
-    # ax3 = fig.add_subplot(111)
-    # ax3.plot(norm_theory, label="Theoretical")
-    # ax3.plot(norm_X, label="Average whole spectra")
-    # ax3.legend(loc='upper left', frameon=False, bbox_to_anchor=(0.3,1.2), ncol=2)
-    # plt.title("Final PCC_value from clusters= %s" %(str(event.pcc(norm_theory, norm_X))))
-    # plt.show()
     return rank_score, pcc_result_cluster, ranks+1, ranks_pcc+1
 def sil_cluster(X,ind):
     unique_ind= np.unique(ind)
@@ -207,67 +194,3 @@ def get_plot(X,crit,ind,t):
         plt.grid(False)
         plt.show()
         plt.close()
-#%%
-    # for i in range(0,len(cluster_ind)):
-    #     z=i+1
-    #     cluster_center=X[i]
-    #     cluster_center_all.append(cluster_center)
-    #     min_distance_index=0
-    #     min_distance=0
-    #     if (z<len(cluster_ind)):
-    #         for k in range(0,z):
-    #             distance=np.linalg.norm(X[i] - X[k])
-    #             distance_center.append(distance)
-    #             if min_distance<distance:
-    #                 min_distance=distance
-    #                 min_distance_index=i
-    #             else:
-    #                 min_distance_index= min_distance_index
-    #                 min_distance=min_distance
-    #     else:
-    #         for k in range(0,z):
-    #             distance=np.linalg.norm(X[i] - X[0]) #for last distance
-    #             distance_center.append(distance) 
-    #             if min_distance<distance:
-    #                 min_distance=distance
-    #                 min_distance_index=i
-    #             else:
-    #                 min_distance_index= min_distance_index
-    #                 min_distance=min_distance
-    # return cluster_center_all, distance_center, min_distance_index
-# test= get_cluster_center(X, ind)
-# def get_silhoutte(crit,X,ind):
-#     cluster_head=list(crit.keys())
-#     cluster_members=list(crit.values())
-#     cl_element=[]
-#     b_all=np.zeros(len(cluster_head))
-#     a_all=np.zeros(len(cluster_head))
-#     sil_score=np.zeros(len(cluster_head))
-#     for i in range(0, len(cluster_head)): #for each cluster a[i] and b[i]
-#         cl_element=cluster_members[i]
-#         a=np.zeros(len(cl_element))
-#         for j in range(0, len(cl_element)): #inside cluster i.e cluster member 
-#             sum_value=0    
-#             for k in range(0, len(cl_element)):
-#                 d_k = np.linalg.norm(cl_element[j] - cl_element[k])
-#                 sum_value= sum_value+d_k
-#             a[j]= sum_value
-#         a_all[i]=np.mean(a)
-#         [cl_centre, cl_distance, min_distance_index]=get_cluster_center(X,ind) # Get cluster centre and distance
-#         z=min_distance_index  # identify nearest cluster
-#         b=np.zeros(len(cluster_members[i]))
-#         for j in range(0, len(cl_element)): #inside cluster i.e cluster member 
-#             sum_value=0    
-#             z=min_distance_index # nearest cluster for a is 2 eg.get_cluster_center(X,ind):
-#             cl_element_near=cluster_members[z]
-#             for k in range(0, len(cl_element_near)):
-#                 d_k = np.linalg.norm(cl_element[j] - cl_element_near[k]) #(cl_element[j]-cl_element_near[k])*(cl_element[j]-cl_element_near[k])
-#                 sum_value= sum_value+d_k
-#             b[j]= sum_value
-#         b_all[i]=np.mean(b)
-#         sil_score[i]=(a_all[i]-b_all[i])/max(a_all[i],b_all[i])
-#     return sil_score
-# Sil_score=get_silhoutte(crit)
-# print(Sil_score)
-# [cl_center, cl_distance, min_distance_index]=get_cluster_center(X,ind)
-# print(min_distance_index)
