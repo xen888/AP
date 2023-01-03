@@ -99,7 +99,7 @@ def get_pcc(X):
             rho_x[k,i]=rho_x[i,k]
             d_x[i,k] = 2-e1[0,1] + e2[0,1] #e2= X[k], e1_rev= X[::-1] d(e1,e2)=2-PCC(e1, e2) +PCC(reverse(e1),e2) 
             d_x[k,i] = d_x[i,k] # 2- e1[0,1] + e3[0,1]
-            d_new[i,k] = -1/(e1[0,1]+e2[0,1])#-12/(e1[0,1]+e2[0,1]+2)+3
+            d_new[i,k] = e1[0,1] - e2[0,1]-2 # [-2,0] -1/(e1[0,1]+e2[0,1])#-12/(e1[0,1]+e2[0,1]+2)+3
             d_new[k,i]=d_new[i,k]                          
     i=0
     while i<N:
@@ -174,7 +174,7 @@ def run(Simmat):
             print('same decision')
         else:
             same_count=same_count
-        if (same_count>=5):
+        if (same_count>=10):
             print('Convergence achieved at m=',m)
             break;
         else:
@@ -186,9 +186,9 @@ def run(Simmat):
         print('No of clusters identified=',cc)
         C=E
     return crit,cc, ind, maxval
-
 # def main():
-df = pd.read_csv(r"C:/Users/Bijen/Documents/AffinityPropagation-master/202212_nanospectra_code/oxa_181/lt119/event.csv",header=None) #need to add a 1st row with title or nothing, data only from 2nd row
+fname=r'202212_nanospectra_code/oxa_181/lt119/event.csv'
+df = pd.read_csv(fname,header=None) #need to add a 1st row with title or nothing, data only from 2nd row
 data=df
 # data=df[df.columns[0:200]] #for columns/features
 data = data.head(500) #for rows/sample
@@ -196,20 +196,22 @@ data=data.to_numpy()
 X=data
 N = data.shape[0]
 N2=data.shape[1]
-X_flip = np.zeros([N,N2])
-X_moving = np.zeros([N,N2])
-for i in range(0, len(X)):
-    exp_data_i= X[i]
-    X_moving[i]= event.moving_averages(exp_data_i, 48)
+# X_flip = np.zeros([N,N2])
+# X_moving = np.zeros([N,N2])
+# # X_norm = np.zeros([N,N2])
+# for i in range(0, len(X)):
+#     exp_data_i= X[i]
+#     X_moving[i]= event.moving_averages(exp_data_i, 48)
+#     X_norm[i]= event.normalize(exp_data_i)
 iter = 100
 lambdax = 0.5
 R = np.zeros([N,N])
 color_map= np.zeros([N,N2])
 # S=get_S(X)
 # print('Similarity matrix done')
-[PCC, PCC_D, PCC_new] = get_pcc(X_moving)
+[PCC, PCC_D, PCC_new] = get_pcc(X)
 print('PCC matrix done')
-crit,cc,ind, maxval= run(PCC) # change here S or PCC
+crit,cc,ind, maxval= run(PCC_new) # change here S or PCC
 with open('Results/Cluster.csv', 'w') as file:
     writer = csv.writer(file)
     writer.writerow(crit.values())
@@ -247,9 +249,10 @@ import pandas as pd
 import sys
 sys.path.insert(0,'Events')
 from Events import my_event
-
-t= pd.read_csv(r"C:/Users/Bijen/Documents/AffinityPropagation-master/202212_nanospectra_code/oxa_181/lt119/theory_trace_2000.csv",header=None)
+print(fname)
+t= pd.read_csv(r"202212_nanospectra_code/low_freq_AB42/theory_trace.csv",header=None)
 t=t.to_numpy()
+examDict, clusDict, distDict = my_event.get_cluster_exampler_member(crit,X)
 rank_score, pcc_score, ranks_ours, ranks_pcc = my_event.get_cluster_rank(X,crit,t)
 sil_score= my_event.sil_cluster(X,ind)
 my_event.get_plot(X,crit,ind,t)
@@ -274,3 +277,102 @@ legend1 = plt.legend(*scatter.legend_elements(), loc="upper right", title="Clust
 plt.xlabel("PCC(S,T)")
 plt.ylabel("PCC(S_flipped,T")
 plt.show()
+#z=(x-mean)/SD
+
+#%%
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.cluster import AffinityPropagation
+from sklearn.cluster import DBSCAN
+from sklearn.cluster import SpectralClustering
+X_z = stats.zscore(X)
+# X_rs = data.copy()
+# sc = StandardScaler()
+# X_rs = df.copy()
+# for c in X_rs.columns:
+#      X_rs[c] = sc.fit_transform(df[c].values.reshape(-1,1))
+     
+clustering_spectra = SpectralClustering(n_clusters=2,assign_labels='discretize',random_state=0).fit(X)
+ind_spectra=clustering_spectra.labels_
+
+clustering_hi = AgglomerativeClustering().fit(X)
+ind_hi = clustering_hi.labels_
+
+clustering_ap = AffinityPropagation(random_state=50).fit(X)
+ind_ap=clustering_ap.labels_
+
+db = DBSCAN(eps=27, min_samples=501)
+db.fit(X)
+ind_db= db.labels_
+
+plt.scatter(r_all, r_flip_all ,c=ind_spectra, cmap='rainbow', alpha=0.7, edgecolors='b')
+plt.title("Clusters Orientation determined by Spectra ="+str(len(np.unique(ind_spectra))))
+plt.show()
+
+plt.scatter(r_all, r_flip_all ,c=ind_hi, cmap='rainbow', alpha=0.7, edgecolors='b')
+plt.title("Clusters determined by Hirerachial with clusters="+str(len(np.unique(ind_hi))))
+plt.show()
+plt.close()
+
+plt.scatter(r_all, r_flip_all,c=ind_ap, cmap='rainbow', alpha=0.7, edgecolors='b')
+plt.title("Clusters determined by  Affinity with clusters="+str(len(np.unique(ind_ap))))
+plt.show()
+plt.close()
+
+plt.scatter(r_all, r_flip_all,c=ind_db, cmap='rainbow', alpha=0.7, edgecolors='b')
+plt.title("Clusters determined by DBSCAN with clusters="+str(len(np.unique(ind_db))))
+plt.show()
+plt.close()
+#%%
+from sklearn.metrics import silhouette_samples, silhouette_score
+x_f=[]
+y_f=[]
+label_f=[]
+for i in range(0, len(ind_hi)):        
+    if (ind_hi[i]==0):# manually label ko value change garnu parxa #95	89	332	457	415
+        x_f.append(r_all[i])
+        y_f.append(r_flip_all[i])
+        label_f.append(label[i])
+    else:
+        print('false')
+plt.scatter(x_f,y_f,c=label_f, cmap='rainbow', alpha=0.7, edgecolors='b') # manually get plot for each cluster
+plt.title("Total spectra in Clusters ="+str(len(label_f)))    
+plt.xlabel("PCC(S,T)")
+plt.ylabel("PCC(S_flipped,T") 
+cm = confusion_matrix(label, ind_hi)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+disp.plot()
+plt.show()
+#%%
+from sklearn.decomposition import PCA
+from sklearn.manifold import Isomap
+from sklearn.cross_decomposition import PLSRegression
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+from sklearn.manifold import TSNE
+
+n_com=2
+# X_pls= PLSRegression(n_components=2).transform(X)
+X_pca= PCA(n_components=n_com).fit_transform(X) #In case of uniformly distributed data, LDA almost always performs better than PCA. However if the data is highly skewed (irregularly distributed) then it is advised to use PCA since LDA can be biased towards the majority class.
+X_iso= Isomap(n_components=2).fit_transform(X)
+X_tsne = TSNE(n_components = n_com).fit_transform(X)
+# X_lda=LDA(n_components=1).transform(X)
+scatter=plt.scatter(X_pca[:,0], X_pca[:,1], c=ind, cmap='rainbow', alpha=0.7, edgecolors='b')
+plt.title('PCA lt076_event.csv'+str(X_pca.shape))
+legend1 = plt.legend(*scatter.legend_elements(), loc="upper right", title="Clusters")
+# handles, labels = scatter.legend_elements(prop="colors", alpha=0.6)
+# legend2 = plt.legend(handles, labels, loc="upper left", title="colors")
+plt.show()
+scatter=plt.scatter(X_iso[:,0], X_iso[:,1],c=ind, cmap='rainbow', alpha=0.7, edgecolors='b')
+plt.title('ISO lt076_event.csv'+str(X_iso.shape))
+legend1 = plt.legend(*scatter.legend_elements(), loc="upper right", title="Clusters")
+plt.show()
+scatter=plt.scatter(X_tsne[:,0], X_tsne[:,1],c=ind, cmap='rainbow', alpha=0.7, edgecolors='b')
+plt.title('TSNE lt076_event.csv'+str(X_tsne.shape))
+legend1 = plt.legend(*scatter.legend_elements(), loc="upper right", title="Clusters")      
+plt.show()   
+
+# legend1 = plt.legend(*scatter.legend_elements(), loc="upper right", title="Clusters")
+   
+# plt.scatter(X_lda[:,0], X_lda[:,1],c=ind, cmap='rainbow', alpha=0.7, edgecolors='b')
+# plt.title('PLS ab42_events.csv'+str(X_lda.shape))
+# r_value=scipy.stats.pearsonr(X,X_pca)
