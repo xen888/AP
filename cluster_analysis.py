@@ -13,10 +13,6 @@ sys.path.insert(0,'Events')
 from Events import my_event
 from sklearn.metrics import calinski_harabasz_score
 from sklearn.metrics import davies_bouldin_score
-# args = sys.argv[1:]
-# if (len(args) == 0):
-#     raise Exception("Please pass in the filename of your data")
-
 
 # theory_fname = open(sys.argv[1], "r")
 # event_fname = open(sys.argv[2], "r")
@@ -24,24 +20,12 @@ from sklearn.metrics import davies_bouldin_score
 # cluster_fname = open(sys.argv[4], "r")
 # ind_fname = open(sys.argv[5], "r")
 
-
-# a1 = r"202212_nanospectra_code/oxa_181/lt119/theory_trace_2000.csv"
-# a2 = r"202212_nanospectra_code/oxa_181/lt119/event.csv"
-# a3 = r"Results/Oxa_181/First 500/Moving average/PCC_new/examplar.csv"
-# a4 = r"Results/Oxa_181/First 500/Moving average/PCC_new/Cluster.csv"
-# a5 = r"Results/Oxa_181/First 500/Moving average/PCC_new/ind.csv"
-
 a1 = r"202212_nanospectra_code/low_freq_AB42/theory_trace.csv"
 a2 = r"202212_nanospectra_code/low_freq_AB42/ab42_events.csv"
 a3 = r"Results/Low_ab42/PCC_new/examplar.csv"
 a4 = r"Results/Low_ab42/PCC_new/Cluster.csv"
 a5 = r"Results/Low_ab42/PCC_new/ind.csv"
 
-# a1 = r"202212_nanospectra_code/high_freq_AB42/pm13/theory_trace_1000.csv"
-# a2 = r"202212_nanospectra_code/high_freq_AB42/pm13/event.csv"
-# a3 = r"Results/High_ab42/First 500/Moving averages/PCC_new/examplar.csv"
-# a4 = r"Results/High_ab42/First 500/Moving averages/PCC_new/Cluster.csv"
-# a5 = r"Results/High_ab42/First 500/Moving averages/PCC_new/ind.csv"
 
 t = pd.read_csv(a1, header=None)
 t=t.to_numpy()
