@@ -1,3 +1,2 @@
-1. Run affinity_try.py, all plots are plotted there
-
-2. cluster_analyis.py is to run from saved .csv file. 
+1. Run affinity_try.py, it gives output as 3 .csv files cluster.csv, ind.csv and examplar.csv
+2. cluster_analyis.py is to run from saved .csv file + theoritical.csv and event.csv. 
